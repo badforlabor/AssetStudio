@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -29,7 +30,8 @@ namespace AssetStudioGUI
 
     internal enum ExportListType
     {
-        XML
+        XML,
+        CSV
     }
 
     internal static class Studio
@@ -495,6 +497,11 @@ namespace AssetStudioGUI
                         doc.Save(filename);
 
                         break;
+
+                    case ExportListType.CSV:
+                        ExportCsv(savePath, toExportAssets);
+
+                        break;
                 }
 
                 var statusText = $"Finished exporting asset list with {toExportAssets.Count()} items.";
@@ -506,6 +513,24 @@ namespace AssetStudioGUI
                     OpenFolderInExplorer(savePath);
                 }
             });
+        }
+        static void ExportCsv(string savePath, List<AssetItem> toExportAssets)
+        {
+            var filename = Path.Combine(savePath, "assets.csv");
+            var sb = new StringBuilder();
+            sb.Append("id,Name,Type,TypeId,Size,Container,PathID,Source\r\n");
+            int counter = 0;
+            foreach (var asset in toExportAssets)
+            {
+                sb.Append($"{counter},{asset.Text},{asset.TypeString}," +
+                    $"{(int)asset.Type},{asset.FullSize}," +
+                    $"{asset.Container},{asset.m_PathID}," +
+                    $"{asset.SourceFile.fullName}\r\n");
+
+                counter++;
+            }
+            File.WriteAllText(filename, sb.ToString());
+
         }
 
         public static void ExportSplitObjects(string savePath, TreeNodeCollection nodes)

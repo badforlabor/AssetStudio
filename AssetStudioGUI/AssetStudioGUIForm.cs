@@ -1576,6 +1576,10 @@ namespace AssetStudioGUI
 
         private void ExportAssetsList(ExportFilter type)
         {
+            ExportAssetsList(type, ExportListType.XML);
+        }
+        private void ExportAssetsList(ExportFilter type, ExportListType eType)
+        {
             // XXX: Only exporting as XML for now, but would JSON(/CSV/other) be useful too?
 
             if (exportableAssets.Count > 0)
@@ -1599,7 +1603,7 @@ namespace AssetStudioGUI
                             toExportAssets = visibleAssets;
                             break;
                     }
-                    Studio.ExportAssetsList(saveFolderDialog.Folder, toExportAssets, ExportListType.XML);
+                    Studio.ExportAssetsList(saveFolderDialog.Folder, toExportAssets, eType);
                 }
             }
             else
@@ -2047,6 +2051,11 @@ namespace AssetStudioGUI
         private void toolStripMenuItem15_Click(object sender, EventArgs e)
         {
             logger.ShowErrorMessage = toolStripMenuItem15.Checked;
+        }
+
+        private void assetListToCSVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportAssetsList(ExportFilter.All, ExportListType.CSV);
         }
 
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)
